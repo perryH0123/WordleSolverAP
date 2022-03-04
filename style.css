@@ -4,10 +4,32 @@ body {
     grid-template-columns: repeat(2, 50vw);
     gap: 0;
     */
+    padding: 0;
 }
 
-.output {
-    grid-column: span 1;
+.view-output {
+    left: 3.5vh;
+    top: 3.5vh;
+    width: 7.5vh;
+    height: 7.5vh;
+    border-radius: 50%;
+    border: none;
+    text-shadow: 0.05em 0.05em #000;
+    font-size: 2em;
+    position: fixed;
+    z-index: 255;
+    transition: transform 200ms ease-in-out;
+    pointer-events: all;
+    user-select: auto;
+    cursor: pointer;
+}
+
+.view-output:hover {
+    transform: scale(1.1);
+}
+
+.processing {
+    background-color: hsl(0,53%,57%);
 }
 
 .game {
@@ -23,20 +45,21 @@ body {
 
 header {
     color: white;
-    display: inline-block;
-    position: absolute;
+    display: block;
+    position:relative;
     top: 0%;
     left: 0%;
     width: 100%;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
     margin: 0 auto;
-    font-size: 1.2em;
+    margin-top: -1em;
+    font-size: 0.8em;
 }
 
 .keyboard {
     display: grid;
-    grid-template-columns: repeat(20, minmax(auto, 1.25em));
+    grid-template-columns: repeat(20, minmax(auto, 1.15em));
     grid-auto-rows: 3em;
     gap: .25em;
     justify-content: center;
@@ -98,7 +121,7 @@ header {
 }
 
 .controls-label {
-    font-size: 1.2em;
+    font-size: minmax(auto, 1.2em);
     grid-column: span 20;
     text-align: center;
     color: white;
@@ -120,7 +143,7 @@ header {
     display: grid;
     justify-content: center;
     align-content: center;
-    flex-grow: 0.8;
+    flex-grow: 0.5;
     grid-template-columns: repeat(5, 4em);
     grid-template-rows: repeat(6, 4em);
     gap: 0.25em;
@@ -223,7 +246,7 @@ header {
     background-color: hsl(115,29%,43%);
 }
 
-[data-inactive] {
+.inactive {
     --light-offset: -25%;
     user-select: none;
     cursor: default;
@@ -257,4 +280,96 @@ header {
 
 .alert.hide {
     opacity: 0;
+}
+
+.output-sheet {
+    position: absolute;
+    top: 5em;
+    z-index: 2;
+    background-color: rgba(220,220,220,0.8);
+    padding: 0.5em;
+    border-radius: 0.3em;
+    margin-top: 2em;
+    width: 80%;
+    align-self: center;
+    transition: opacity 500ms ease-in-out, transform 500ms ease-out;
+}
+
+.output-sheet * {
+    margin: 0;
+}
+
+.output-sheet h3 p{
+    display: inline;
+    margin-top: 0.4em;
+}
+
+.output-sheet .potential, .output-sheet .maximize {
+    margin-top: 0.2em;
+    min-height: 10vh;
+    border: 1px solid gray;
+    display: block;
+    max-height: 30vh;
+    width: 100%;
+    overflow: auto;
+}
+
+.output-sheet div:last-child {
+    margin-bottom: 0.2em;
+}
+
+.output-sheet p {
+    min-height: 1em;
+}   
+
+.output-sheet .debug {
+    margin-top: 0.3em;
+    display: block;
+    width: 100%;
+    height: 20vh;
+    background-color: hsl(221, 53%, 8%);
+    color: #FFF;
+    max-height: 20vh;
+    overflow: auto;
+}
+
+.close {
+    position:absolute;
+    font-weight: 500;
+    width: 2em;
+    height: 2em;
+    align-content: center;
+    right:0.3em;
+    top:0.3em;
+    background-color: rgba(0,0,0,0);
+    border: none;
+    transition: color 200ms ease-in-out;
+    color: rgb(0,0,0); 
+    cursor: pointer;
+
+}
+
+.close:hover {
+    color: rgb(250,250,250);
+}
+
+.hidden {
+    opacity: 0;
+}
+
+.displayed {
+    opacity: 1;
+}
+
+.up {
+    transform: translateY(-30%);
+}
+
+.down {
+    transform: translateY(0%);
+}
+
+[data-debug-clear] {
+    user-select: text;
+    cursor: pointer;
 }

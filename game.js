@@ -62,12 +62,12 @@ const pressKey = key => {
     nextTile.textContent = key;
     nextTile.dataset.state = "active";
     nextTile.classList.add("grow");
-    setTimeout(()=>{nextTile.classList.remove("grow")},GROW_ANIMATION_DURATION)
+    setTimeout(()=>{nextTile.classList.remove("grow")},GROW_ANIMATION_DURATION);
 }
 
-const getActiveTiles = () => {
+/*const getActiveTiles = () => {
     return guessGrid.querySelectorAll('[data-state="active"]');
-}
+}*/
 
 const deleteKey = key => {
     const activeTiles = getActiveTiles();
@@ -98,10 +98,10 @@ const submitGuess = () => {
     }
 
     stopInteraction();
-    activeTiles.forEach((...params) => flipTile(...params, guess));
+    activeTiles.forEach((...params) => flipTiles(...params, guess));
 }
 
-const flipTile = (tile, index, array, guess) => {
+const flipTiles = (tile, index, array, guess) => {
     const letter = tile.dataset.letter;
     const key = keyboard.querySelector(`[data-key="${letter.toUpperCase()}"]`);
     setTimeout(() => {
@@ -125,8 +125,8 @@ const flipTile = (tile, index, array, guess) => {
 
         if(index === array.length - 1){
             tile.addEventListener("transitionend",() => {
-                checkWinLose(guess, array);
                 startInteraction();
+                checkWinLose(guess, array);
             }, {once: true});
         } 
     }, {once: true});
