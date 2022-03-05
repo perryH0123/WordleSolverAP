@@ -29,7 +29,7 @@ const handleKey = e => {
             submitKey(e.key);
             switchInteractivity();
             return;
-        } else {
+        } else if (e.key != "`") {
             displayAlert("Enter a Key.", 2000);
             shakeTiles(getActiveTiles());
         }
@@ -43,6 +43,8 @@ const handleKey = e => {
                 break;
             case "3":
                 setTileState(getLastActive(),"wrong");
+                break;
+            case "`":
                 break;
             default:
                 displayAlert("Enter a state.",2000);

@@ -45,3 +45,11 @@ clear.addEventListener("click", () => {
 button.addEventListener("click",togglePanelVisibility);
 
 document.addEventListener("keydown", logKey);
+
+document.addEventListener("keydown",function(e){
+    switch(e.key){
+        case "`":
+            togglePanelVisibility();
+            break;
+    }
+});
