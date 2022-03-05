@@ -70,7 +70,7 @@ const handleClick = e => {
     }
     
     if(e.target.matches("[data-enter]")){
-        calculateWords();
+        solveWords();
         return;
     }
     if(e.target.matches("[data-delete]")){
