@@ -143,6 +143,8 @@ const getTilesAs2DArray = (wordLength=5, numWords=6) => {
 
 const deleteLastTile = () => {
     const lastTile = getLastFilled();
+    const key = keyboard.querySelector(`[data-key="${lastTile.dataset.letter.toUpperCase()}"]`);
+    const classes = ["correct","wrong-location","wrong"].forEach(classCSS => key.classList.remove(classCSS));
     if(!lastTile || lastTile.classList.contains("flip")) return;
     lastTile.textContent = "";
     delete lastTile.dataset.letter;
@@ -162,6 +164,8 @@ const submitKey = key => {
 }
 
 const setTileState = (tile, state) => {
+    const key = keyboard.querySelector(`[data-key="${tile.dataset.letter.toUpperCase()}"]`);
+    key.classList.add(state);
     tile.classList.add("flip");
     tile.addEventListener("transitionend",() => {
         tile.dataset.state = state;

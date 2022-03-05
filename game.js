@@ -116,7 +116,7 @@ const flipTiles = (tile, index, array, guess) => {
         } else {
             if (targetWord.includes(letter) && getRemainingCounts(guess, targetWord, letter,index) > 0){
                 tile.dataset.state = "wrong-location";
-                key.classList.add("wrong-locationn");
+                key.classList.add("wrong-location");
             } else {
                 tile.dataset.state = "wrong";
                 key.classList.add("wrong");
