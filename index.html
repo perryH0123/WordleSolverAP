@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link type="text/css" href="reset.css" rel="stylesheet">
         <link type="text/css" href="style.css" rel="stylesheet">
+        <script type="text/javascript" src="scoring.js"></script>
         <script type="text/javascript" src="dictionary.js"></script>
         <script type="text/javascript" src="targetWords.js"></script>
-        <!--<script src="game.js" defer></script>-->
         <script src="script.js" defer></script>
         <title>Wordle Solver</title>
     </head>
@@ -103,8 +103,8 @@
                         <button class="key long inactive" data-correct data-control data-set-correct>✓ (1)</button>
                     <button class="key long inactive" data-wrong-location data-control data-set-wrong-location>? (2)</button>
                     <button class="key long inactive" data-incorrect data-control data-set-wrong>X (3)</button>
-                    <button class="key long clear inactive" data-clear data-control>CLEAR (4)</button>
-                    <button class="key long reset inactive" data-reset data-control>RESET</button> 
+                    <!--<button class="key long clear inactive" data-clear data-control>CLEAR (4)</button>-->
+                    <button class="key long reset" data-reset>RESET</button> 
         </div>
         <script type="text/javascript" src="solverInterface.js"></script> 
     </body>

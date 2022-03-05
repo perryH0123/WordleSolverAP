@@ -3,6 +3,10 @@ const WORD_LENGTH = 6;
 const FLIP_DURATION = 500;
 const GROW_ANIMATION_DURATION=50;
 
+let potentialWords;
+let infoWords;
+let duplicateLetters;
+
 const guessGrid = document.querySelector("[data-guess-grid]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const keyboard = document.querySelector("[data-keyboard]");
@@ -10,7 +14,7 @@ const keyboard = document.querySelector("[data-keyboard]");
 const handleKey = e => {
     switch(e.key){
         case "Enter":
-            calculateWords();
+            solveWords();
             return;
         case "Delete":
             deleteLastTile();
@@ -48,10 +52,23 @@ const handleKey = e => {
 }
 
 const handleClick = e => {
-    if(e.target.matches("[data-key]")) {
-        submitKey(e.target.dataset.key);
-        return;
+    if(!awaitingState()){
+        if(e.target.matches("[data-key]")) {
+            submitKey(e.target.dataset.key);
+        }
+        switchInteractivity();
+    } else {
+        if(e.target.matches("[data-set-correct]")){
+            setTileState(getLastActive(),"correct");
+        }
+        if(e.target.matches("[data-set-wrong-location]")){
+            setTileState(getLastActive(),"wrong-location");
+        }
+        if(e.target.matches("[data-set-wrong]")){
+            setTileState(getLastActive(),"wrong");
+        }
     }
+    
     if(e.target.matches("[data-enter]")){
         calculateWords();
         return;
@@ -60,19 +77,7 @@ const handleClick = e => {
         deleteLastTile();
         return;
     }
-    if(e.target.matches("[data-set-correct]")){
-        setTileState(getLastActive(),"correct");
-        return;
-    }
-    if(e.target.matches("[data-set-wrong-location]")){
-        setTileState(getLastActive(),"wrong-location");
-        return;
-    }
-    if(e.target.matches("[data-set-wrong]")){
-        setTileState(getLastActive(),"wrong");
-        return;
-    }
-    if(e.target.matches("data-delete")){
+    if(e.target.matches("[data-reset]")){
         resetBoard();
         return;
     }
@@ -126,7 +131,7 @@ const getTilesAs2DArray = (wordLength=5, numWords=6) => {
     for(let i = 0; i<numWords; i++){
         const wordList = [];
         for(let j = 0; j<wordLength; j++){
-            wordList.push(grid[tileCounter].dataset.letter);
+            wordList.push(grid[tileCounter].dataset);
             tileCounter++;
         }
         gridList.push(wordList);
@@ -140,6 +145,7 @@ const deleteLastTile = () => {
     lastTile.textContent = "";
     delete lastTile.dataset.letter;
     delete lastTile.dataset.state;
+    switchInteractivity();
 }
 
 const submitKey = key => {
@@ -150,6 +156,7 @@ const submitKey = key => {
     nextTile.dataset.letter = key.toLowerCase();
     nextTile.classList.add("grow");
     setTimeout(()=>{nextTile.classList.remove("grow")},GROW_ANIMATION_DURATION);
+    setButtonProcessing();
 }
 
 const setTileState = (tile, state) => {
@@ -207,10 +214,179 @@ const shakeTiles = tiles => {
 
 const startInteractivity = () => {
     document.addEventListener("keydown",handleKey);
+    document.addEventListener("click",handleClick);
 }
 
 const resetBoard = () => {
+    setButtonProcessing();
     getFilled().forEach(tile=>{deleteLastTile()});
 }
 
+class repeatedLetter {
+    constructor(letter, num){
+        this[letter] = letter;
+        this[occurances] = num;
+    }
+}
+
+const hasRepeatedLetters = word => {
+    for(let i = 0; i<word.length; i++){
+        for(let j = i+1; j< word.length; j++){
+            if(word[i] == word[j]) {
+
+            }
+        }
+    }
+    return false;
+}
+
+const generateCorrectPattern = gridAs2DList => {
+    const result = [undefined,undefined,undefined,undefined,undefined];
+    for(let i = 0; i<gridAs2DList[0].length; i++){
+        let columnLetter;
+        for(let j = 0; j<gridAs2DList.length; j++){
+            if(gridAs2DList[j][i].state && gridAs2DList[j][i].state == "correct"){
+                columnLetter = gridAs2DList[j][i].letter;
+            }
+        }
+        result[i] = columnLetter;
+    }
+    return result;
+}
+
+const setButtonProcessing = () => {
+    const button = document.querySelector("[data-view-output]");
+    button.classList.add("processing");
+    button.classList.remove("completed");
+    button.textContent = "🤔";
+    const outputs = document.querySelectorAll("[data-potential], [data-maximize]");
+    outputs.forEach(element => element.textContent = "Waiting for computation...");
+}
+
+const setButtonCompleted = (potentialList, maximizeList) => {
+    const button = document.querySelector("[data-view-output]");
+    button.classList.remove("processing");
+    button.classList.add("completed");
+    button.textContent = ["💡","🧠","💪"][Math.floor(Math.random() * 3)];
+    if(typeof potentialList == 'object'){
+        if (potentialList.length <= 5) button.textContent="💯";
+        if (potentialList.length < 1) button.textContent="😵";
+    } 
+    const potential = document.querySelector("[data-potential]");
+    const maximize = document.querySelector("[data-maximize]");
+    potential.textContent = potentialList ? potentialList.join(", ") : "";
+    maximize.textContent = maximizeList ? maximizeList.join(", ") : "";
+}
+
+const buildLetterCounter = word => {
+    const counter = {};
+    for(let char of word){
+        counter[char] = counter[char] ? counter[char]+1 : 1;
+    }
+    return counter;
+}
+
+/*const generateMisplacedPattern2 = gridAs2DList => {
+    const pattern = [];
+    for(let word of gridAs2DList){
+        const hasRepeated = hasRepeatedLetters(word);
+        for(let i = 0; i<word.length; i++){
+            console.log(word[i]);
+            if(hasRepeated) duplicateLetters.push(word[i]); //janky hueristic
+            if(word[i].state && word[i].state == "wrong-location"){
+                
+                pattern.push({
+                    letter: word[i],
+                    invalidLocations: [],
+                    numOccurances: 
+                    addInvalidLocation = index => invalidLocations.push(index)
+                });
+            }
+        }
+    }
+    return pattern;
+}*/
+
+const generateMisplacedPattern = gridAs2DList => {
+    const pattern = {};
+    for(const word of gridAs2DList){
+        word.forEach((let, index) => {
+            if(let.state == "wrong-location"){
+                if(!pattern[let.letter]){ //this allows for no duplication of valid letters
+                    pattern[let.letter] = {
+                        disallowedIndex: [index]
+                    };
+                    return;
+                } else {
+                    pattern[let.letter].disallowedIndex.push(index);
+                }
+            }
+        });
+    }
+    return pattern;
+}
+
+const generateInvalidPattern = (gridAs2DList, misplacedPattern={}, correctPattern=[]) => {
+    const invalid = [];
+    const existsSomewhereInWord = Object.keys(misplacedPattern);
+    for(const word of gridAs2DList){
+        for(const letterObj of word){
+            if(letterObj.letter && !existsSomewhereInWord.includes(letterObj.letter) && !correctPattern.includes(letterObj.letter) && letterObj.state == "wrong"){
+                invalid.push(letterObj.letter);
+            }
+            /**
+             * For the meantime, the above is sufficient for determining if a letter is repeated or not and to avoid disqualifying
+             * it if it is also marked yellow somewhere in the word.
+             * 
+             * A future version of the algorithm could include limiting the letters of the search to further refine the
+             * results and avoid including entries with too many repeated letters in our guess.
+             * 
+             * In the current version of Wordle though, there are very little to none letters with more than 2 of the same letters,
+             * meaning this algorithm is sufficient enough at catching repeats, and fulfills its purpose for the scope of the project.
+             */
+        }
+    }
+    return invalid;
+}
+
+const solveWords = () => {
+    duplicateLetters = [];
+    const gridAs2DList = getTilesAs2DArray();
+    const correctPattern = generateCorrectPattern(gridAs2DList);
+    const misplacedPattern = generateMisplacedPattern(gridAs2DList);
+    const invalidPattern = generateInvalidPattern(gridAs2DList,misplacedPattern,correctPattern);
+    potentialWords = dictionary;
+    infoWords = dictionary;
+    correctPattern.forEach((letter, index) => {
+        potentialWords = potentialWords.filter(word => (letter) ? word[index] == letter : true);
+        infoWords = infoWords.filter(word => !word.includes(letter));
+    });
+    console.log(potentialWords);
+    console.log(infoWords);
+    console.log(invalidPattern);
+    invalidPattern.forEach((letter) => {
+        potentialWords = potentialWords.filter(word => !word.includes(letter));
+        infoWords = infoWords.filter(word => !word.includes(letter));
+    });
+
+    console.log(potentialWords);
+    console.log(infoWords);
+
+    //do misplaced last since this filtration is the most taxing
+    for(const letterStr in misplacedPattern){
+        potentialWords=potentialWords.filter((word) => word.includes(letterStr));
+        potentialWords=potentialWords.filter((word, index) => {
+            for(let i = 0; i<misplacedPattern[letterStr].disallowedIndex.length; i++){
+                return word[misplacedPattern[letterStr].disallowedIndex[i]] != letterStr;
+            }
+        });
+        infoWords = infoWords.filter(word => !word.includes(letterStr));
+    }
+
+    setButtonCompleted(orderWordsByScore(potentialWords),orderWordsByScore(infoWords,true));
+    console.log(potentialWords);
+    console.log(infoWords);
+}
+
+setButtonProcessing();
 startInteractivity();

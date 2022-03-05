@@ -32,6 +32,10 @@ body {
     background-color: hsl(0,53%,57%);
 }
 
+.completed {
+    background-color: hsl(197,61%,70%);
+}
+
 .game {
     grid-column: span 1;
     background-color: inherit;
@@ -92,7 +96,7 @@ header {
 }
 
 .long {
-    grid-column: span 4;
+    grid-column: span 5;
 }
 
 .key > svg {
@@ -291,8 +295,13 @@ header {
     border-radius: 0.3em;
     margin-top: 2em;
     width: 80%;
+    max-width: 600px;
     align-self: center;
-    transition: opacity 500ms ease-in-out, transform 500ms ease-out;
+    transition: opacity 300ms ease-in-out, transform 500ms ease-in-out;
+}
+
+.output-sheet p {
+    font-size: 0.8em;
 }
 
 .output-sheet * {
