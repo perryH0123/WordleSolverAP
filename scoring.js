@@ -44,7 +44,8 @@ const hasDuplicate = word => {
 const calculateScore = word => {
     let sum = 0;
     for(const letter of word){
-        sum += proportions[letter];
+        let score = Math.pow(proportions[letter],(["a","e","i","o","u"].includes(letter) ? 1.5 : 1));
+        sum += score;
     }
     return sum/word.length;
 }
@@ -57,6 +58,6 @@ const orderWordsByScore = (words,noDuplicateLetters) => {
     });
     const sorted = wordScorePairings.sort((a,b) => a[1]-b[1]);
     const extracted = [];
-    sorted.forEach(pairing => extracted.push(pairing[0]));
+    sorted.forEach(pairing => extracted.unshift(pairing[0]));
     return extracted;
 }

@@ -10,12 +10,12 @@ body {
 .view-output {
     left: 3.5vh;
     top: 3.5vh;
-    width: 7.5vh;
-    height: 7.5vh;
+    width: 2.5em;
+    height: 2.5em;
     border-radius: 50%;
     border: none;
     text-shadow: 0.05em 0.05em #000;
-    font-size: 2em;
+    font-size: 1.5em;
     position: fixed;
     z-index: 255;
     transition: transform 200ms ease-in-out;
@@ -147,7 +147,7 @@ header {
     display: grid;
     justify-content: center;
     align-content: center;
-    flex-grow: 0.5;
+    flex-grow: 1;
     grid-template-columns: repeat(5, 4em);
     grid-template-rows: repeat(6, 4em);
     gap: 0.25em;
