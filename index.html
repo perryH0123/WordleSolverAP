@@ -22,6 +22,8 @@
             </div>
             <div class="output-sheet hidden up" data-visibility="hidden" data-output-sheet>
                 <button data-close class="close">✕</button>
+                <input type="checkbox" class="use-wordle" data-use-wordle>
+                <p class="checkbox-label" data-checkbox-label>Use Wordle Probabilities</p>
                 <h3>Potential Words</h3>
                 <p class="potential" data-potential></p>
                 <h3>Words to Maximize Information</h3>
@@ -107,5 +109,6 @@
                     <button class="key long reset" data-reset>RESET</button> 
         </div>
         <script type="text/javascript" src="solverInterface.js"></script> 
+        <script type="text/javascript" src="findLetterProbabilities.js"></script> 
     </body>
 </html>

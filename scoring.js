@@ -1,7 +1,7 @@
 /**Data obtained from
  * https://www3.nd.edu/~busiforc/handouts/cryptography/letterfrequencies.html
  */
-const proportions = {
+let proportions = {
     a: 43.31,
     b: 10.56,
     c: 23.13,
@@ -44,7 +44,7 @@ const hasDuplicate = word => {
 const calculateScore = word => {
     let sum = 0;
     for(const letter of word){
-        let score = Math.pow(proportions[letter],(["a","e","i","o","u"].includes(letter) ? 1.5 : 1));
+        let score = Math.pow(proportions[letter],(["a","e","i","o","u"].includes(letter) ? 2.25 : 1));
         sum += score;
     }
     return sum/word.length;

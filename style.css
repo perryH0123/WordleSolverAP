@@ -382,3 +382,11 @@ header {
     user-select: text;
     cursor: pointer;
 }
+
+.checkbox-label {
+    display: inline;
+}
+
+.checkbox {
+    display: inline;
+}

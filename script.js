@@ -10,6 +10,7 @@ let duplicateLetters;
 const guessGrid = document.querySelector("[data-guess-grid]");
 const alertContainer = document.querySelector("[data-alert-container]");
 const keyboard = document.querySelector("[data-keyboard]");
+const checkbox = document.querySelector("[data-use-wordle]");
 
 const handleKey = e => {
     switch(e.key){
@@ -54,6 +55,10 @@ const handleKey = e => {
 }
 
 const handleClick = e => {
+    if(e.target.matches("[data-use-wordle]")){
+        //useWordleProbabilities();
+        return;
+    }
     if(!awaitingState()){
         if(e.target.matches("[data-key]")) {
             submitKey(e.target.dataset.key);
@@ -107,6 +112,7 @@ const getLastFilled = () => {
     for(let i = tiles.length-1; i>=0; i--) {
         if(tiles[i].dataset.letter) return tiles[i];
     }
+    return null;
 }
 
 const getFilled = () => {
@@ -143,6 +149,7 @@ const getTilesAs2DArray = (wordLength=5, numWords=6) => {
 
 const deleteLastTile = () => {
     const lastTile = getLastFilled();
+    if(!lastTile) return;
     const key = keyboard.querySelector(`[data-key="${lastTile.dataset.letter.toUpperCase()}"]`);
     const classes = ["correct","wrong-location","wrong"].forEach(classCSS => key.classList.remove(classCSS));
     if(!lastTile || lastTile.classList.contains("flip")) return;
@@ -332,12 +339,17 @@ const generateMisplacedPattern = gridAs2DList => {
     return pattern;
 }
 
-const generateInvalidPattern = (gridAs2DList, misplacedPattern={}, correctPattern=[]) => {
+const generateInvalidPattern = (gridAs2DList, correctPattern=[]) => {
     const invalid = [];
-    const existsSomewhereInWord = Object.keys(misplacedPattern);
+    //const existsSomewhereInWord = Object.keys(misplacedPattern);
     for(const word of gridAs2DList){
+        //first pass to detect shared yellows WITHIN the word
+        const existsSomewhereInWord = [];
+        for (const letterObj of word) {
+            if(letterObj.letter && letterObj.state =="wrong-location" || letterObj.state=="correct") existsSomewhereInWord.push(letterObj.letter);
+        }
         for(const letterObj of word){
-            if(letterObj.letter && !existsSomewhereInWord.includes(letterObj.letter) && !correctPattern.includes(letterObj.letter) && letterObj.state == "wrong"){
+            if(letterObj.letter && !existsSomewhereInWord.includes(letterObj.letter) && letterObj.state == "wrong"){
                 invalid.push(letterObj.letter);
             }
             /**
@@ -356,42 +368,46 @@ const generateInvalidPattern = (gridAs2DList, misplacedPattern={}, correctPatter
 }
 
 const solveWords = () => {
+    console.time("Execution time");
     duplicateLetters = [];
     const gridAs2DList = getTilesAs2DArray();
     const correctPattern = generateCorrectPattern(gridAs2DList);
     const misplacedPattern = generateMisplacedPattern(gridAs2DList);
-    const invalidPattern = generateInvalidPattern(gridAs2DList,misplacedPattern,correctPattern);
+    const invalidPattern = generateInvalidPattern(gridAs2DList,correctPattern);
     potentialWords = dictionary;
     infoWords = dictionary;
     correctPattern.forEach((letter, index) => {
         potentialWords = potentialWords.filter(word => (letter) ? word[index] == letter : true);
         infoWords = infoWords.filter(word => !word.includes(letter));
     });
-    console.log(potentialWords);
-    console.log(infoWords);
-    console.log(invalidPattern);
+    //console.log(potentialWords);
+    //console.log(infoWords);
+    //console.log(invalidPattern);
     invalidPattern.forEach((letter) => {
         potentialWords = potentialWords.filter(word => !word.includes(letter));
         infoWords = infoWords.filter(word => !word.includes(letter));
     });
 
-    console.log(potentialWords);
-    console.log(infoWords);
+    //console.log(potentialWords);
+    //console.log(infoWords);
 
     //do misplaced last since this filtration is the most taxing
     for(const letterStr in misplacedPattern){
+        const disallowedIndexIterable = misplacedPattern[letterStr].disallowedIndex;
         potentialWords=potentialWords.filter((word) => word.includes(letterStr));
         potentialWords=potentialWords.filter((word, index) => {
-            for(let i = 0; i<misplacedPattern[letterStr].disallowedIndex.length; i++){
-                return word[misplacedPattern[letterStr].disallowedIndex[i]] != letterStr;
+            for(const index of disallowedIndexIterable){
+                //console.log(`${letterStr} is disallowed in position ${index}`)
+                return word[index] != letterStr;
             }
         });
         infoWords = infoWords.filter(word => !word.includes(letterStr));
     }
-
+    useWordleProbabilities();
     setButtonCompleted(orderWordsByScore(potentialWords),orderWordsByScore(infoWords,true));
-    console.log(potentialWords);
-    console.log(infoWords);
+    //console.log(potentialWords);
+    //console.log(infoWords);
+    console.timeEnd("Execution time")
 }
 
 setButtonProcessing();

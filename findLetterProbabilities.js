@@ -1,4 +1,4 @@
-const dictionary = [
+const dictionary2 = [
     "aahed",
     "aalii",
     "aargh",
@@ -12973,3 +12973,77 @@ const dictionary = [
     "shave"
 ];
 
+const ogProbabilities = {
+    a: 43.31,
+    b: 10.56,
+    c: 23.13,
+    d: 17.25,
+    e: 56.88,
+    f: 9.24,
+    g: 2.59,
+    h: 15.31,
+    i: 38.45,
+    j: 1,
+    k: 5.61,
+    l: 27.98,
+    m: 15.36,
+    n: 33.92,
+    o: 36.51,
+    p: 16.14,
+    q: 1,
+    r: 38.64,
+    s: 29.23,
+    t: 35.43,
+    u: 18.51,
+    v: 5.13,
+    w: 6.57,
+    x: 1.48,
+    y: 9.06,
+    z: 1.39
+};
+
+//const checkbox = document.querySelector("[data-use-wordle]");
+let _use_wordle = false;
+
+const useWordleProbabilities = () => {
+        
+    numWords = dictionary.length;
+    numLetters = numWords * WORD_LENGTH;
+
+    const letters = {};
+
+    for(const word of dictionary){
+        for(const letter of word){
+            if(!letters[letter]) letters[letter] = {};
+            letters[letter].count = letters[letter].count ? letters[letter].count + 1 : 1;
+        }
+    }
+
+    for(const letter in letters){
+        letters[letter].probability = letters[letter].count / numLetters;
+    }
+
+    let min = letters["a"].probability;
+    for(const letter in letters){
+    if(letters[letter].probability < min) min = letters[letter].probability;
+    }
+    if(checkbox.checked){
+        for(const letter in letters){
+            if(!_use_wordle){
+                displayAlert(`Use Wordle words: ${checkbox.checked}`,1000);
+                _use_wordle = true;
+            }
+            letters[letter].scaled_proportion = letters[letter].probability / min;
+            proportions[letter] = letters[letter].scaled_proportion;
+        }
+        return letters;
+    }
+if(_use_wordle){
+    displayAlert(`Use Wordle words: ${checkbox.checked}`,1000);
+    _use_wordle = false;
+}
+
+    proportions = ogProbabilities;
+    
+    return letters;
+}
