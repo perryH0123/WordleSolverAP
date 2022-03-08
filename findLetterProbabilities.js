@@ -13028,22 +13028,24 @@ const useWordleProbabilities = () => {
     if(letters[letter].probability < min) min = letters[letter].probability;
     }
     if(checkbox.checked){
+        const generated = {};
         for(const letter in letters){
             if(!_use_wordle){
                 displayAlert(`Use Wordle words: ${checkbox.checked}`,1000);
                 _use_wordle = true;
             }
             letters[letter].scaled_proportion = letters[letter].probability / min;
-            proportions[letter] = letters[letter].scaled_proportion;
+            generated[letter] = letters[letter].scaled_proportion;
         }
+        proportions = generated;
         return letters;
+    } else {
+        proportions = ogProbabilities;
     }
-if(_use_wordle){
-    displayAlert(`Use Wordle words: ${checkbox.checked}`,1000);
-    _use_wordle = false;
-}
-
-    proportions = ogProbabilities;
+    if(_use_wordle){
+        displayAlert(`Use Wordle words: ${checkbox.checked}`,1000);
+        _use_wordle = false;
+    }
     
     return letters;
 }
