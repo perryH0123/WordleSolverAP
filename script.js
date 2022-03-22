@@ -393,7 +393,6 @@ const solveWords = () => {
     //console.log(infoWords);
 
     //do misplaced last since this filtration is the most taxing
-    console.log(misplacedPattern)
     for(const letterStr in misplacedPattern){
         const disallowedIndexIterable = misplacedPattern[letterStr].disallowedIndex;
         potentialWords=potentialWords.filter((word) => word.includes(letterStr));
