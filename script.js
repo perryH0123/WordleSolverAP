@@ -254,7 +254,8 @@ const hasRepeatedLetters = word => {
 }
 
 const generateCorrectPattern = gridAs2DList => {
-    const result = [undefined,undefined,undefined,undefined,undefined];
+    const result = [];
+    for(let i = 0; i<WORD_LENGTH; i++) result.push(undefined);
     for(let i = 0; i<gridAs2DList[0].length; i++){
         let columnLetter;
         for(let j = 0; j<gridAs2DList.length; j++){
@@ -353,7 +354,7 @@ const generateInvalidPattern = (gridAs2DList, correctPattern=[]) => {
                 invalid.push(letterObj.letter);
             }
             /**
-             * For the meantime, the above is sufficient for determining if a letter is repeated or not and to avoid disqualifying
+             * For the meantime, the above hueristic is sufficient for determining if a letter is repeated or not and to avoid disqualifying
              * it if it is also marked yellow somewhere in the word.
              * 
              * A future version of the algorithm could include limiting the letters of the search to further refine the
@@ -392,14 +393,18 @@ const solveWords = () => {
     //console.log(infoWords);
 
     //do misplaced last since this filtration is the most taxing
+    console.log(misplacedPattern)
     for(const letterStr in misplacedPattern){
         const disallowedIndexIterable = misplacedPattern[letterStr].disallowedIndex;
         potentialWords=potentialWords.filter((word) => word.includes(letterStr));
-        potentialWords=potentialWords.filter((word, index) => {
+        potentialWords=potentialWords.filter((word) => {
+            let bad = false;
             for(const index of disallowedIndexIterable){
                 //console.log(`${letterStr} is disallowed in position ${index}`)
-                return word[index] != letterStr;
+                if (word[index] == letterStr) bad = true;
+                //cannot return directly, ends the loop iteration for the word in question, resulting in only the first disallowedIndex being checked
             }
+            return !bad;
         });
         infoWords = infoWords.filter(word => !word.includes(letterStr));
     }

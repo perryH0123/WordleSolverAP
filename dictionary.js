@@ -1,4 +1,4 @@
-const dictionary = [
+let dictionary = [
     "aahed",
     "aalii",
     "aargh",
